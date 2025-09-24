@@ -13,15 +13,20 @@ A modern, AI-powered document question and answer system built with Python and O
 ## 📁 Project Structure
 
 ```
-openai_api/
+document_searcher/
 ├── main.py                 # Original command-line interface
 ├── modern_gui.py          # Modern GUI application
 ├── run_gui.py             # GUI launcher script
+├── query_manager.py       # Command-line query interface
 ├── qa_agent.py            # AI model interface
 ├── document_loader.py     # PDF processing and chunking
 ├── embeddings_manager.py  # Vector embeddings management
 ├── vector_search.py      # Similarity search
+├── pdf_metadata.py       # PDF metadata extraction
 ├── model_comparison.py   # Model performance testing
+├── gui_app.py            # Original GUI (legacy)
+├── api_testing.py        # API testing utilities
+├── view_usage.py         # Usage monitoring
 └── README.md             # This file
 ```
 
@@ -30,7 +35,7 @@ openai_api/
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/YOUR_USERNAME/document-qa-system.git
-   cd document-qa-system/openai_api
+   cd document-qa-system/document_searcher
    ```
 
 2. **Install dependencies**:
@@ -39,7 +44,7 @@ openai_api/
    ```
 
 3. **Set up environment variables**:
-   - Create a `.env` file in the `openai_api` directory
+   - Create a `.env` file in the `document_searcher` directory
    - Add your OpenAI API key:
      ```
      OPENAI_API_KEY=your_api_key_here
@@ -55,6 +60,11 @@ python modern_gui.py
 ### **Command Line Interface**
 ```bash
 python main.py
+```
+
+### **Query Manager (Interactive CLI)**
+```bash
+python query_manager.py
 ```
 
 ### **Model Comparison**
