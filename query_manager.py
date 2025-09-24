@@ -1,4 +1,4 @@
-# query.py
+# query_manager.py
 from embeddings_manager import load_embeddings
 from vector_search import find_most_relevant
 from qa_agent import ask_gpt
