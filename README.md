@@ -98,7 +98,6 @@ python model_comparison.py
 
 ## 📝 Example Questions
 
-- "What is the Wi-Fi password for the Calumino hotspot?"
 - "How do I configure the device settings?"
 - "What are the technical specifications?"
 - "What troubleshooting steps are available?"
