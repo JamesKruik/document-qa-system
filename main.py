@@ -5,7 +5,7 @@ from vector_search import find_most_relevant
 from qa_agent import ask_gpt
 import os
 
-PDF_FILES = ["2104500_CALUMINO_Brochure_EVK.pdf", "2103115_Calumino_EVK_QuickStart_Guide.pdf"]  # your two PDFs
+PDF_FILES = ["pdf_1.pdf", "pdf_2.pdf"]  # your two PDFs
 EMBEDDINGS_FILE = "embeddings.json"
 
 def main():
