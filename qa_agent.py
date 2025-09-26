@@ -24,11 +24,11 @@ AVAILABLE_MODELS = {
         "accuracy": "Excellent",
         "max_tokens": 4000
     },
-    "gpt-4o-turbo": {
-        "name": "GPT-4o Turbo",
-        "description": "Fast GPT-4o variant with good performance",
-        "cost": "Medium",
-        "accuracy": "Excellent",
+    "gpt-3.5-turbo": {
+        "name": "GPT-3.5 Turbo",
+        "description": "Legacy fast and cost-effective model, good for lightweight tasks",
+        "cost": "Very Low",
+        "accuracy": "Medium",
         "max_tokens": 4000
     },
     "gpt-4": {
@@ -85,7 +85,7 @@ def get_model_recommendation(question_complexity="medium"):
     recommendations = {
         "simple": "gpt-4o-mini",      # Fast, cheap for simple questions
         "medium": "gpt-4o",           # Balanced for most questions
-        "complex": "gpt-4o-turbo",    # Good for complex technical questions
+        "complex": "gpt-3.5-turbo",    # Good for complex technical questions
         "critical": "gpt-4"           # Highest accuracy for critical applications
     }
     return recommendations.get(question_complexity, "gpt-4o")

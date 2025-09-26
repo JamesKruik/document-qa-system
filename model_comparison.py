@@ -20,23 +20,24 @@ def test_model_performance():
     
     # Sample context from Calumino documentation
     sample_context = """
-    Configure a Wi-Fi Hotspot using the name "Calumino" and the password "Calumino_EVK123".
-    Note: iPhone users will need to change the device name in Settings > General > About > Name.
-    Ensure "Maximize Compatibility" is enabled in the Wi-Fi settings.
-    The Calumino EVK supports both 2.4GHz and 5GHz bands.
+    To set up your SmartHome device, connect it to a Wi-Fi network using the SSID "SmartHomeHub"
+    and the password "SmartHome123". 
+    For iPhone users, update the device name in Settings > General > About > Name.
+    Ensure that "Compatibility Mode" is enabled in the Wi-Fi settings.
+    The SmartHome device supports both 2.4GHz and 5GHz frequency bands.
     """
     
     sample_questions = [
-        "What is the Wi-Fi password for the Calumino hotspot?",
-        "What should iPhone users do to connect?",
-        "What frequency bands does the Calumino EVK support?",
-        "How do I configure the Wi-Fi hotspot?"
+        "What is the Wi-Fi password for the SmartHome hotspot?",
+        "What steps should iPhone users take to connect?",
+        "Which frequency bands does the SmartHome device support?",
+        "How do I configure the SmartHome Wi-Fi settings?"
     ]
     
     models_to_test = [
         "gpt-4o-mini",
         "gpt-4o", 
-        "gpt-4o-turbo",
+        "gpt-3.5-turbo",
         "gpt-4"
     ]
     

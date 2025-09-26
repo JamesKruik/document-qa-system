@@ -5,7 +5,7 @@ A modern, AI-powered document question and answer system built with Python and O
 ## 🚀 Features
 
 - **Modern GUI**: Sleek CustomTkinter interface with dark theme
-- **Multiple AI Models**: Choose from GPT-4o Mini, GPT-4o, GPT-4o Turbo, or GPT-4
+- **Multiple AI Models**: Choose from GPT-4o Mini, GPT-4o, GPT-3.5 Turbo, or GPT-4
 - **Smart PDF Processing**: Intelligent text chunking with overlap for better context
 - **Vector Search**: Advanced similarity search for relevant document sections
 - **Real-time Q&A**: Interactive question answering with progress indicators
@@ -34,7 +34,7 @@ document_searcher/
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/document-qa-system.git
+   git clone https://github.com/JamesKruik/document-qa-system.git
    cd document-qa-system/document_searcher
    ```
 
@@ -78,7 +78,7 @@ python model_comparison.py
 |-------|------|----------|----------|
 | GPT-4o Mini | Low | Good | Simple questions |
 | GPT-4o | Medium | Excellent | Most tasks |
-| GPT-4o Turbo | Medium | Excellent | Technical content |
+| GPT-3.5 Turbo | Very Low | Medium | Technical content |
 | GPT-4 | High | Outstanding | Complex reasoning |
 
 ## 📖 How It Works
