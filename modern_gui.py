@@ -1,8 +1,9 @@
 import customtkinter as ctk
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, font as tkfont
 import threading
 import os
+import re
 from document_loader import load_and_chunk
 from embeddings_manager import create_embeddings, save_embeddings, load_embeddings
 from vector_search import find_most_relevant
@@ -12,6 +13,42 @@ from pdf_metadata import extract_pdf_metadata, get_pdf_preview
 # Set appearance mode and color theme
 ctk.set_appearance_mode("dark")  # Modes: "System" (standard), "Dark", "Light"
 ctk.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
+
+def render_markdown_to_tk_text(textbox: tk.Text, content: str):
+    """Render markdown content to a tkinter Text widget with formatting"""
+    textbox.configure(state="normal")
+    textbox.delete("1.0", "end")
+
+    lines = content.splitlines()
+    for line in lines:
+        # --- Headers & bullets ---
+        if line.startswith("# "):
+            textbox.insert("end", line[2:].strip() + "\n", "h1")
+            continue
+        elif line.startswith("## "):
+            textbox.insert("end", line[3:].strip() + "\n", "h2")
+            continue
+        elif line.startswith("- "):
+            line = "• " + line[2:].strip()
+
+        # --- Inline formatting ---
+        pos = 0
+        for match in re.finditer(r"\*\*(.*?)\*\*|\*(.*?)\*|`(.*?)`", line):
+            start, end = match.span()
+            # normal text before match
+            textbox.insert("end", line[pos:start])
+
+            if match.group(1):  # **bold**
+                textbox.insert("end", match.group(1), "bold")
+            elif match.group(2):  # *italic*
+                textbox.insert("end", match.group(2), "italic")
+            elif match.group(3):  # `code`
+                textbox.insert("end", match.group(3), "code")
+
+            pos = end
+        textbox.insert("end", line[pos:] + "\n")
+
+    textbox.configure(state="disabled")
 
 class ModernDocumentQAGUI:
     def __init__(self):
@@ -53,8 +90,8 @@ class ModernDocumentQAGUI:
         self.content_frame = ctk.CTkFrame(self.main_frame)
         self.content_frame.grid(row=1, column=0, sticky="nsew", padx=20, pady=(0, 20))
         self.content_frame.grid_columnconfigure(0, weight=1)
-        self.content_frame.grid_rowconfigure(0, weight=1)
-        self.content_frame.grid_rowconfigure(1, weight=1)
+        self.content_frame.grid_rowconfigure(0, weight=0)  # PDF section - fixed size
+        self.content_frame.grid_rowconfigure(1, weight=1)  # Q&A section - expandable
         
         # PDF Management Section
         self.setup_pdf_section()
@@ -77,7 +114,7 @@ class ModernDocumentQAGUI:
             text="📄 Document Management", 
             font=ctk.CTkFont(size=18, weight="bold")
         )
-        pdf_title.grid(row=0, column=0, columnspan=3, pady=(15, 10))
+        pdf_title.grid(row=0, column=0, columnspan=4, pady=(15, 10))
         
         # Load PDFs button
         self.load_btn = ctk.CTkButton(
@@ -165,7 +202,7 @@ class ModernDocumentQAGUI:
             font=ctk.CTkFont(size=12),
             text_color="#A0A0A0"
         )
-        self.status_label.grid(row=3, column=0, columnspan=3, pady=(0, 15))
+        self.status_label.grid(row=3, column=0, columnspan=4, pady=(0, 15))
         
     def setup_qa_section(self):
         # Q&A Frame
@@ -245,14 +282,40 @@ class ModernDocumentQAGUI:
         answer_label = ctk.CTkLabel(answer_frame, text="Answer:", font=ctk.CTkFont(size=14, weight="bold"))
         answer_label.grid(row=0, column=0, sticky="w", padx=15, pady=(15, 5))
         
-        # Answer text area
-        self.answer_text = ctk.CTkTextbox(
+        # Answer text area with markdown support
+        self.answer_text = tk.Text(
             answer_frame,
             height=200,
-            font=ctk.CTkFont(size=12),
-            wrap="word"
+            wrap="word",
+            bg="#1e1e1e",
+            fg="white",
+            insertbackground="white",
+            relief="flat",
+            padx=12,
+            pady=8,
+            font=("Segoe UI", 12)
         )
         self.answer_text.grid(row=1, column=0, sticky="nsew", padx=15, pady=(0, 15))
+        
+        # Configure markdown text tags
+        self.setup_markdown_tags()
+    
+    def setup_markdown_tags(self):
+        """Configure text tags for markdown formatting"""
+        # Font configurations
+        default_font = tkfont.Font(family="Segoe UI", size=12)
+        bold_font = tkfont.Font(family="Segoe UI", size=12, weight="bold")
+        italic_font = tkfont.Font(family="Segoe UI", size=12, slant="italic")
+        code_font = tkfont.Font(family="Consolas", size=11)
+        h1_font = tkfont.Font(family="Segoe UI", size=18, weight="bold")
+        h2_font = tkfont.Font(family="Segoe UI", size=15, weight="bold")
+        
+        # Configure text tags
+        self.answer_text.tag_config("bold", font=bold_font)
+        self.answer_text.tag_config("italic", font=italic_font)
+        self.answer_text.tag_config("code", font=code_font, background="#333333")
+        self.answer_text.tag_config("h1", font=h1_font, foreground="#00e0e0", spacing3=8)
+        self.answer_text.tag_config("h2", font=h2_font, foreground="#ffaa00", spacing3=4)
         
     def load_pdfs(self):
         """Open file dialog to select PDF files"""
@@ -575,8 +638,10 @@ class ModernDocumentQAGUI:
         # Disable ask button and show processing
         model_name = self.available_models[self.selected_model]['name']
         self.ask_btn.configure(state='disabled', text=f"🤔 Thinking with {model_name}...")
+        self.answer_text.configure(state="normal")
         self.answer_text.delete("1.0", "end")
         self.answer_text.insert("1.0", f"Processing your question with {model_name}...")
+        self.answer_text.configure(state="disabled")
         
         # Run question answering in separate thread
         thread = threading.Thread(target=self._ask_question_thread, args=(question,))
@@ -601,14 +666,12 @@ class ModernDocumentQAGUI:
     def _question_complete(self, answer):
         """Called when question answering is complete"""
         self.ask_btn.configure(state='normal', text="🔍 Ask Question")
-        self.answer_text.delete("1.0", "end")
-        self.answer_text.insert("1.0", answer)
+        render_markdown_to_tk_text(self.answer_text, answer)
     
     def _question_error(self, error_msg):
         """Called when question answering encounters an error"""
         self.ask_btn.configure(state='normal', text="🔍 Ask Question")
-        self.answer_text.delete("1.0", "end")
-        self.answer_text.insert("1.0", f"Error: {error_msg}")
+        render_markdown_to_tk_text(self.answer_text, f"**Error:** {error_msg}")
     
     def run(self):
         """Start the GUI application"""
